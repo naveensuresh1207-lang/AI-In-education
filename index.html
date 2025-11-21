@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>EduAI Adaptive Learning Chatbot</title>
+
+  <!-- Google Fonts: Inter & Poppins -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter&family=Poppins:wght@600&display=swap" rel="stylesheet" />
+
+  <style>
+    /* Reset & base */
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background-color: #f9faff;
+      color: #333;
+    }
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+    button {
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    /* Navigation Bar */
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.75rem 2rem;
+      background-color: #5a4ade;
+      color: white;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .nav-left {
+      font-family: 'Poppins', sans-serif;
+      font-weight: 700;
+      font-size: 1.5rem;
+      letter-spacing: 1.5px;
+      user-select: none;
+    }
+    .nav-center {
+      display: flex;
+      gap: 2rem;
+      font-weight: 600;
+      font-size: 1rem;
+    }
+    .nav-center a:hover {
+      opacity: 0.8;
+    }
+    .nav-right {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: white;
+      color: #5a4ade;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 1.2rem;
+      user-select: none;
+    }
+
+    /* Hero Section */
+    .hero {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 3rem;
+      padding: 4rem 2rem;
+      background: linear-gradient(135deg, #5a4ade 0%, #827dea 100%);
+      color: white;
+      flex-wrap: wrap;
+      text-align: center;
+    }
+    .hero-text {
+      max-width: 480px;
+    }
+    .hero-text h1 {
+      font-family: 'Poppins', sans-serif;
+      font-weight: 700;
+      font-size: 2.75rem;
+      margin-bottom: 0.5rem;
+      line-height: 1.1;
+    }
+    .hero-text p {
+      font-size: 1.2rem;
+      opacity: 0.9;
+      margin-bottom: 2rem;
+    }
+    .btn-primary {
+      background-color: #fff;
+      color: #5a4ade;
+      font-weight: 700;
+      font-size: 1.1rem;
+      padding: 0.75rem 2.5rem;
+      border: none;
+      border-radius: 30px;
+      box-shadow: 0 4px 12px rgba(255,255,255,0.6);
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+    .btn-primary:hover {
+      background-color: #433db2;
+      color: #fff;
+    }
+    .hero-illustration {
+      max-width: 400px;
+      width: 100%;
+    }
+
+    /* Chatbot Section */
+    .chatbot-container {
+      background: white;
+      max-width: 720px;
+      margin: 2rem auto;
+      border-radius: 24px 24px 48px 24px;
+      box-shadow: 0 10px 20px rgba(90,74,222,0.12);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .chat-header {
+      background-color: #5a4ade;
+      color: white;
+      padding: 1rem 1.5rem;
+      font-weight: 600;
+      font-size: 1.1rem;
+      border-radius: 24px 24px 0 0;
+      user-select: none;
+    }
+    .chat-messages {
+      height: 320px;
+      overflow-y: auto;
+      padding: 1rem 1.5rem;
+      background: #f5f6fb;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .chat-bubble {
+      max-width: 70%;
+      padding: 0.75rem 1rem;
+      border-radius: 18px;
+      font-size: 0.95rem;
+      line-height: 1.3;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    }
+    .chat-bubble.ai {
+      background-color: #e1dfff;
+      align-self: flex-start;
+      border-bottom-left-radius: 4px;
+    }
+    .chat-bubble.user {
+      background-color: #5a4ade;
+      color: white;
+      align-self: flex-end;
+      border-bottom-right-radius: 4px;
+    }
+
+    /* Chat Input */
+    .chat-input-container {
+      display: flex;
+      padding: 1rem 1.5rem 1.2rem;
+      background: white;
+      align-items: center;
+      border-top: 1px solid #ddd;
+    }
+    .chat-input {
+      flex: 1;
+      border: 1px solid #bbb;
+      border-radius: 30px;
+      padding: 0.5rem 1rem;
+      font-size: 1rem;
+      font-family: 'Inter', sans-serif;
+      outline: none;
+      transition: border-color 0.3s ease;
+    }
+    .chat-input:focus {
+      border-color: #5a4ade;
+      box-shadow: 0 0 5px rgba(90,74,222,0.5);
+    }
+    .input-icons {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      margin-left: 0.8rem;
+    }
+    .icon-button {
+      background: none;
+      border: none;
+      font-size: 1.3rem;
+      color: #5a4ade;
+      cursor: pointer;
+      user-select: none;
+    }
+    .icon-button:hover {
+      color: #3a2dae;
+    }
+
+    /* Question Assessment Card */
+    .assessment-card {
+      max-width: 720px;
+      margin: 2rem auto;
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 10px 25px rgba(90,74,222,0.12);
+      padding: 2rem;
+    }
+    .assessment-header {
+      font-weight: 600;
+      font-size: 1.3rem;
+      margin-bottom: 1rem;
+      color: #5a4ade;
+    }
+    .question-text {
+      font-size: 1.1rem;
+      margin-bottom: 1rem;
+      font-weight: 500;
+    }
+    .choices {
+      list-style-type: none;
+      padding: 0;
+      margin-bottom: 1.5rem;
+    }
+    .choices li {
+      background-color: #f4f4fc;
+      margin: 0.5rem 0;
+      padding: 0.7rem 1rem;
+      border-radius: 14px;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: background-color 0.3s, border-color 0.3s;
+      user-select: none;
+    }
+    .choices li:hover {
+      background-color: #e1dfff;
+    }
+    .choices li.selected {
+      border-color: #5a4ade;
+      background-color: #d2c7ff;
+      font-weight: 600;
+    }
+    .difficulty-indicator {
+      margin-bottom: 1rem;
+      font-weight: 500;
+      color: #7e7e9a;
+    }
+    .progress-bar-container {
+      background: #ddd;
+      border-radius: 10px;
+      height: 12px;
+      margin-bottom: 1.5rem;
+      overflow: hidden;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      background-color: #5a4ade;
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+    .btn-next {
+      background-color: #5a4ade;
+      color: white;
+      border: none;
+      padding: 0.85rem 1.8rem;
+      font-weight: 700;
+      font-size: 1rem;
+      border-radius: 30px;
+      float: right;
+      opacity: 0.85;
+      pointer-events: none;
+      user-select: none;
+      transition: opacity 0.3s ease;
+    }
+    .btn-next.enabled {
+      opacity: 1;
+      pointer-events: auto;
+      user-select: auto;
+    }
+
+    /* Adaptive Curriculum Card */
+    .curriculum-section {
+      max-width: 720px;
+      margin: 3rem auto 4rem;
+      padding: 2rem;
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 10px 25px rgba(90,74,222,0.1);
+    }
+    .curriculum-header {
+      font-weight: 600;
+      color: #5a4ade;
+      font-size: 1.5rem;
+      margin-bottom: 1.5rem;
+      text-align: center;
+    }
+    .days-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1.3rem;
+    }
+    .day-block {
+      background-color: #eef0ff;
+      border-radius: 16px;
+      padding: 1rem 1.2rem 1.2rem;
+      box-shadow: 0 4px 12px rgba(90,74,222,0.12);
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      font-size: 0.9rem;
+    }
+    .day-block h4 {
+      margin: 0 0 0.3rem;
+      font-weight: 700;
+      color: #423caf;
+      font-size: 1.1rem;
+    }
+    .day-block p {
+      flex: 1;
+      margin: 0 0 0.6rem;
+      color: #666;
+      font-size: 0.9rem;
+    }
+    .links {
+      margin-top: auto;
+      display: flex;
+      gap: 0.7rem;
+    }
+    .links a {
+      color: #5a4ade;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+      border-radius: 16px;
+      padding: 0.3rem 0.8rem;
+      background-color: #d7d9fc;
+      transition: background-color 0.3s ease;
+    }
+    .links a:hover {
+      background-color: #bfc3f9;
+    }
+    .links svg {
+      width: 16px;
+      height: 16px;
+      fill: currentColor;
+    }
+
+    /* Scrollbar for chat */
+    .chat-messages::-webkit-scrollbar {
+      width: 8px;
+    }
+    .chat-messages::-webkit-scrollbar-thumb {
+      background-color: #8b81ff;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <nav>
+    <div class="nav-left" aria-label="EduAI logo">EduAI</div>
+    <div class="nav-center" role="navigation" aria-label="Primary menu">
+      <a href="#">Home</a>
+      <a href="#">Courses</a>
+      <a href="#">Progress</a>
+      <a href="#">Settings</a>
+    </div>
+    <div class="nav-right" aria-label="User profile" title="Profile" tabindex="0">👤</div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero" aria-label="Introduction and call to action">
+    <div class="hero-text">
+      <h1>Your Personalized 30-Day Learning Coach</h1>
+      <p>Chat with the AI tutor, answer questions, and get a custom study path instantly.</p>
+      <button id="startAssessmentBtn" class="btn-primary" aria-label="Start assessment">Start Assessment</button>
+    </div>
+    <div class="hero-illustration" aria-hidden="true">
+      <!-- Illustration: student studying with AI assistant -->
+      <svg width="100%" height="300" viewBox="0 0 600 400" fill="none" xmlns="http://www.w3.org/2000/svg" role="img">
+        <title>Student studying with AI assistant</title>
+        <rect x="50" y="150" width="120" height="180" rx="20" fill="#BBBDFD" />
+        <circle cx="110" cy="100" r="50" fill="#7E7DEB"/>
+        <rect x="320" y="80" width="180" height="220" rx="35" fill="#A1A6FF" opacity="0.7"/>
+        <circle cx="410" cy="50" r="25" fill="#D1D5FF"/>
+        <path d="M245 170c20-50 70-80 120-40" stroke="#423CAF" stroke-width="10" stroke-linecap="round"/>
+        <text x="320" y="310" font-family="Poppins" font-weight="700" font-size="60" fill="#5a4ade" opacity="0.2">AI</text>
+      </svg>
+    </div>
+  </section>
+
+  <!-- Chatbot Section -->
+  <section class="chatbot-container" aria-label="AI Learning Tutor Chatbot">
+    <div class="chat-header" id="chatHeader">Learning Tutor</div>
+    <div class="chat-messages" id="chatMessages" role="log" aria-live="polite" aria-relevant="additions"></div>
+    <form id="chatForm" class="chat-input-container" role="search" aria-label="Chat input form">
+      <input type="text" id="chatInput" class="chat-input" placeholder="Type your question…" aria-label="Chat message input" autocomplete="off" />
+      <div class="input-icons">
+        <button type="button" class="icon-button" id="micBtn" aria-label="Voice input">
+          🎤
+        </button>
+        <button type="submit" class="icon-button" aria-label="Send message">
+          ➤
+        </button>
+      </div>
+    </form>
+  </section>
+
+  <!-- Question Assessment UI -->
+  <section class="assessment-card" id="assessmentCard" aria-label="Question assessment" hidden>
+    <div class="assessment-header">Assessment</div>
+    <div class="question-text" id="questionText"></div>
+    <ul class="choices" id="choicesList" role="listbox" tabindex="0"></ul>
+    <div class="difficulty-indicator" id="difficultyIndicator"></div>
+    <div class="progress-bar-container" aria-label="Question progress">
+      <div class="progress-bar-fill" id="progressBar"></div>
+    </div>
+    <button id="nextQuestionBtn" class="btn-next" disabled>Next Question</button>
+  </section>
+
+  <!-- Adaptive Curriculum Section -->
+  <section class="curriculum-section" id="curriculumSection" aria-label="Personalized 30-day curriculum" hidden>
+    <div class="curriculum-header">Your Personalized 30-Day Curriculum</div>
+    <div class="days-grid" id="daysGrid"></div>
+  </section>
+
+  <script>
+    // Elements references
+    const chatMessages = document.getElementById('chatMessages');
+    const chatForm = document.getElementById('chatForm');
+    const chatInput = document.getElementById('chatInput');
+    const startAssessmentBtn = document.getElementById('startAssessmentBtn');
+    const assessmentCard = document.getElementById('assessmentCard');
+    const questionText = document.getElementById('questionText');
+    const choicesList = document.getElementById('choicesList');
+    const difficultyIndicator = document.getElementById('difficultyIndicator');
+    const progressBar = document.getElementById('progressBar');
+    const nextQuestionBtn = document.getElementById('nextQuestionBtn');
+    const curriculumSection = document.getElementById('curriculumSection');
+    const daysGrid = document.getElementById('daysGrid');
+
+    // State variables
+    let currentQuestionIndex = 0;
+    let selectedChoice = null;
+    let assessmentStarted = false;
+    let userAnswers = [];
+    let difficultyLevel = 1; // 1: easy, 2: medium, 3: hard
+
+    // Sample questions (simplified example for calculus)
+    const questions = [
+      {
+        text: "What is the derivative of x²?",
+        choices: ["2x", "x", "x²", "1"],
+        correctIndex: 0,
+        difficulty: 1
+      },
+      {
+        text: "Integral of 1/x dx is:",
+        choices: ["ln|x| + C", "x", "1/x² + C", "x² / 2"],
+        correctIndex: 0,
+        difficulty: 2
+      },
+      {
+        text: "Limit of (sin x) / x as x approaches 0 is:",
+        choices: ["1", "0", "∞", "-1"],
+        correctIndex: 0,
+        difficulty: 2
+      },
+      {
+        text: "Which method is best for solving the integral ∫ x e^x dx?",
+        choices: ["Integration by parts", "Substitution", "Partial fractions", "Trigonometric substitution"],
+        correctIndex: 0,
+        difficulty: 3
+      },
+      // Add more questions as needed (total ~8)
+    ];
+
+    // Example 30-day curriculum template (simplified)
+    function generateCurriculum() {
+      // For demonstration, we generate 30 days with example topics and resources.
+      const curriculum = [];
+      for (let day = 1; day <= 30; day++) {
+        let topic = `Topic ${day}: Foundational concept`;
+        let explanation = `Short explanation for concept of day ${day}.`;
+        let practice = "#"; // Link placeholder
+        let video = "#"; // Link placeholder
+
+        // Example specific subjects (change for your use)
+        if (day <= 10) {
+          topic = `Day ${day}: Calculus Basics`;
+          explanation = "Review limits, derivatives, and foundational calculus concepts.";
+          practice = "https://www.khanacademy.org/math/calculus-1";
+          video = "https://www.youtube.com/watch?v=WUvTyaaNkzM";
+        } else if (day <= 20) {
+          topic = `Day ${day}: Calculus Intermediate`;
+          explanation = "Dive into integration techniques and applications.";
+          practice = "https://www.khanacademy.org/math/integration";
+          video = "https://www.youtube.com/watch?v=E6y2gc94qBg";
+        } else {
+          topic = `Day ${day}: Thermodynamics Introduction`;
+          explanation = "Basics of thermodynamics, energy, and systems.";
+          practice = "https://www.khanacademy.org/science/physics/thermodynamics";
+          video = "https://www.youtube.com/watch?v=Vby3h2GE5EY";
+        }
+
+        curriculum.push({ day, topic, explanation, practice, video });
+      }
+      return curriculum;
+    }
+
+    // Utility: Append chat message (AI or user)
+    function appendChatMessage(text, sender='ai') {
+      const bubble = document.createElement('div');
+      bubble.classList.add('chat-bubble', sender);
+      bubble.textContent = text;
+      chatMessages.appendChild(bubble);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    // Initialize chatbot with welcome message
+    function initChatbot() {
+      appendChatMessage("Hi! I'm your Learning Tutor. I will ask a few questions to understand your knowledge level and learning style.");
+      appendChatMessage("Ask me anything, or click Start to begin!");
+    }
+
+    // Handle user chat form submit
+    chatForm.addEventListener('submit', e => {
+      e.preventDefault();
+      const message = chatInput.value.trim();
+      if (!message) return;
+
+      appendChatMessage(message, 'user');
+      chatInput.value = '';
+
+      // Simple AI response simulation
+      setTimeout(() => {
+        if (!assessmentStarted) {
+          appendChatMessage("Please click 'Start Assessment' to begin your personalized quiz.");
+        } else {
+          appendChatMessage("Great question! Let's continue with your assessment.");
+        }
+      }, 600);
+    });
+
+    // Handle voice input (basic simulation)
+    document.getElementById('micBtn').addEventListener('click', () => {
+      alert("Voice input feature is not available in this demo.");
+    });
+
+    // Start Assessment button
+    startAssessmentBtn.addEventListener('click', () => {
+      if (assessmentStarted) return;
+      assessmentStarted = true;
+      userAnswers = [];
+      currentQuestionIndex = 0;
+      difficultyLevel = 1;
+      // Hide curriculum if visible
+      curriculumSection.hidden = true;
+      nextQuestionBtn.disabled = true;
+      selectedChoice = null;
+      displayQuestion(currentQuestionIndex);
+
+      // Show assessment card and scroll to it
+      assessmentCard.hidden = false;
+      assessmentCard.scrollIntoView({behavior: 'smooth'});
+      // Add chat message to inform start
+      appendChatMessage("Starting your assessment now!");
+    });
+
+    // Display question
+    function displayQuestion(index) {
+      const q = questions[index];
+      questionText.textContent = q.text;
+      difficultyIndicator.textContent = `Difficulty: ${difficultyLabel(q.difficulty)}`;
+      progressBar.style.width = ((index + 1) / questions.length) * 100 + '%';
+
+      // Generate choices list
+      choicesList.innerHTML = '';
+      q.choices.forEach((choice, idx) => {
+        const li = document.createElement('li');
+        li.textContent = choice;
+        li.setAttribute('role', 'option');
+        li.tabIndex = 0;
+        li.dataset.index = idx;
+        li.addEventListener('click', () => {
+          selectChoice(li);
+        });
+        li.addEventListener('keydown', e => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            selectChoice(li);
+          }
+        });
+        choicesList.appendChild(li);
+      });
+    }
+
+    // Label for difficulty number
+    function difficultyLabel(level) {
+      switch(level) {
+        case 1: return 'Easy';
+        case 2: return 'Medium';
+        case 3: return 'Hard';
+        default: return '';
+      }
+    }
+
+    // Select a choice
+    function selectChoice(li) {
+      // Remove old selection
+      const allChoices = choicesList.querySelectorAll('li');
+      allChoices.forEach(c => c.classList.remove('selected'));
+      li.classList.add('selected');
+      selectedChoice = parseInt(li.dataset.index, 10);
+      nextQuestionBtn.disabled = false;
+      nextQuestionBtn.classList.add('enabled');
+    }
+
+    // Next Question button clicked
+    nextQuestionBtn.addEventListener('click', () => {
+      if (selectedChoice === null) return;
+
+      // Save user answer and difficulty
+      const currentQ = questions[currentQuestionIndex];
+      const isCorrect = selectedChoice === currentQ.correctIndex;
+
+      userAnswers.push({question: currentQ.text, selected: selectedChoice, correct: currentQ.correctIndex, difficulty: currentQ.difficulty, isCorrect});
+
+      // Adjust difficulty based on correctness (simple heuristic)
+      if (isCorrect && difficultyLevel < 3) difficultyLevel++;
+      else if (!isCorrect && difficultyLevel > 1) difficultyLevel--;
+
+      // Move to next question or finish
+      currentQuestionIndex++;
+      selectedChoice = null;
+      nextQuestionBtn.disabled = true;
+      nextQuestionBtn.classList.remove('enabled');
+
+      if (currentQuestionIndex < questions.length) {
+        // Optionally choose next question by difficulty - here just next question
+        displayQuestion(currentQuestionIndex);
+      } else {
+        // End of assessment
+        assessmentCard.hidden = true;
+        showCurriculum();
+      }
+    });
+
+    // Show personalized curriculum (simplified logic)
+    function showCurriculum() {
+      curriculumSection.hidden = false;
+      daysGrid.innerHTML = '';
+
+      const curriculum = generateCurriculum();
+
+      curriculum.forEach(day => {
+        const dayBlock = document.createElement('div');
+        dayBlock.classList.add('day-block');
+        dayBlock.innerHTML = `
+          <h4>Day ${day.day}: ${day.topic}</h4>
+          <p>${day.explanation}</p>
+          <div class="links">
+            <a href="${day.practice}" target="_blank" rel="noopener" aria-label="Practice problem link">
+              Practice
+            </a>
+            <a href="${day.video}" target="_blank" rel="noopener" aria-label="Video reference link">
+              <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24">
+                <path d="M10 15l5.19-3L10 9v6zM21 7l-1.5 9c-.1.6-.7 1-1.3 1H6.8c-.6 0-1.2-.4-1.3-1L4 7c0-.6.4-1 1-1h14c.6 0 1 .4 1 1z"/>
+              </svg>
+            </a>
+          </div>
+        `;
+        daysGrid.appendChild(dayBlock);
+      });
+      curriculumSection.scrollIntoView({behavior: 'smooth'});
+      appendChatMessage("Here is your personalized 30-day curriculum. Good luck!");
+    }
+  </script>
+</body>
+</html>
